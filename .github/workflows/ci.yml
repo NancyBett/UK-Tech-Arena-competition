@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          clean: false
+          submodules: recursive
+          ssh-key: ${{ secrets.SSH_KEY }}
+
+      - name: Checkout sample models
+        shell: bash
+        run: cd sample-models && git checkout main
+
+      - name: Checkout scripts
+        shell: bash
+        run: cd scripts && git checkout main
+
+      - name: Build
+        shell: bash
+        run: ./scripts/build_ai.sh
+
+  test:
+    name: Test
+    runs-on: self-hosted
+    needs: build
+
+    env:
+      LEADERBOARD_TOKEN: ${{ secrets.LEADERBOARD_TOKEN }}
+      LEADERBOARD_PLAYER_ID: ${{ secrets.LEADERBOARD_PLAYER_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          clean: false
+          submodules: recursive
+          ssh-key: ${{ secrets.SSH_KEY }}
+
+      - name: Checkout sample models
+        shell: bash
+        run: cd sample-models && git checkout main
+
+      - name: Checkout scripts
+        shell: bash
+        run: cd scripts && git checkout main
+
+      - name: Test
+        shell: bash
+        run: ./scripts/test_ai.sh

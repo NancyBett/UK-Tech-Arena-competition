@@ -1,0 +1,6 @@
+[submodule "sample-models"]
+	path = sample-models
+	url = git@github.com:UKTechArena/sample-models.git
+[submodule "scripts"]
+	path = scripts
+	url = git@github.com:UKTechArena/scripts.git
